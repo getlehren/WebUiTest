@@ -1,11 +1,13 @@
 package org.example.lesson5;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.example.lesson6.LoginPage;
+import org.example.lesson6.MainPage;
+import org.example.lesson6.RoomPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -35,6 +37,7 @@ public class NotAloneTest {
         actions = new Actions(driver);
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, 5);
+        driver.get("https://notalone.tv");
     }
 
     @AfterEach
@@ -46,8 +49,8 @@ public class NotAloneTest {
     void testHappyLogin() throws InterruptedException {
         login("Student2021test2021", "student2021");
 
-        wait.until(ExpectedConditions.invisibilityOf(driver.findElement(By.xpath("//input[@name=\"login\"]"))));
-        WebElement element = driver.findElement(By.xpath("//span[@class=\"resultBox auth_result success\"]"));
+        wait.until(ExpectedConditions.invisibilityOf(new LoginPage(driver).getLoginField()));
+        WebElement element = new LoginPage(driver).getAuthorizationSuccessWindow();
 
         assertEquals("Авторизация прошла успешно!\n" + "Переадресация..", element.getText());
     }
@@ -56,33 +59,34 @@ public class NotAloneTest {
     void testUnHappyLogin() throws InterruptedException {
         login("Student2021test2021", "RANDOM_PASSWORD");
 
-        wait.until(d -> (d.findElement(By.xpath("//span[@class=\"resultBox auth_result error\"]"))));
-        WebElement element = driver.findElement(By.xpath("//span[@class=\"resultBox auth_result error\"]"));
+        wait.until(ExpectedConditions.visibilityOf(new LoginPage(driver).getAuthorizationFailedWindow()));
+        WebElement element = new LoginPage(driver).getAuthorizationFailedWindow();
 
         assertEquals("Пользователь не найден. Возможно, неверный пароль или Вы пытаетесь ввести никнейм вместо логина.", element.getText());
     }
 
     @Test
-    void testCreateRoom() throws InterruptedException {
+    void testCreateRoom() {
         login("Student2021test2021", "student2021");
 
-        actions.moveToElement(driver.findElement(By.xpath("//a[contains(text(), \"Совместный просмотр\")]"))).build().perform();
-        driver.findElement(By.xpath("//a[contains(text(), \"Создать новую комнату\")]")).click();
+        new MainPage(driver)
+                .moveToElement("Совместный просмотр")
+                .clickCreateRoomInDropdown();
 
-        wait.until(d -> (d.findElement(By.xpath("//div[@id=\"new_player\"]"))));
-        WebElement deleteButton = driver.findElement(By.xpath("//button[contains(text(), \"Удалить\")]"));
-        WebElement shareRoom = driver.findElement(By.xpath("//h2[.=\"Поделиться комнатой\"]"));
+        WebElement deleteButton = new RoomPage(driver).getDeleteButton();
+        WebElement shareRoom = new RoomPage(driver).getShareRoomHeader();
 
-        assertNotNull(deleteButton);
-        assertNotNull(shareRoom);
+        assertNotNull(deleteButton, "Нет кнопки удаления комнаты");
+        assertNotNull(shareRoom, "Нет меню Поделиться комнатой");
     }
 
     private void login(String username, String password) {
-        driver.get("https://notalone.tv");
-        driver.findElement(By.xpath("//span//a[.=\"Авторизация\"]")).click();
+        new MainPage(driver)
+                .clickAuthorizationButton();
 
-        driver.findElement(By.xpath("//input[@name=\"login\"]")).sendKeys(username);
-        driver.findElement(By.xpath("//input[@name=\"password\"]")).sendKeys(password);
-        driver.findElement(By.xpath("//form[@id=\"auth_new\"]//button")).click();
+        new LoginPage(driver)
+                .enterLogin(username)
+                .enterPassword(password)
+                .clickSubmit();
     }
 }
