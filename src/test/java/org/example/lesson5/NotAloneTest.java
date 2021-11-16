@@ -4,10 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.example.lesson6.LoginPage;
 import org.example.lesson6.MainPage;
 import org.example.lesson6.RoomPage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -46,6 +43,7 @@ public class NotAloneTest {
     }
 
     @Test
+    @DisplayName("Позитивная попытка авторизации")
     void testHappyLogin() throws InterruptedException {
         login("Student2021test2021", "student2021");
 
@@ -56,6 +54,7 @@ public class NotAloneTest {
     }
 
     @Test
+    @DisplayName("Негативная попытка авторизации")
     void testUnHappyLogin() throws InterruptedException {
         login("Student2021test2021", "RANDOM_PASSWORD");
 
@@ -66,6 +65,7 @@ public class NotAloneTest {
     }
 
     @Test
+    @DisplayName("Создание новой комнаты")
     void testCreateRoom() {
         login("Student2021test2021", "student2021");
 

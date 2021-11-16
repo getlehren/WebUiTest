@@ -1,5 +1,6 @@
 package org.example.lesson6;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,11 +20,13 @@ public class MainPage extends BasePage {
     @FindBy(xpath = "//a[contains(text(), \"Создать новую комнату\")]")
     private WebElement createRoomDropdownMenu;
 
+    @Step("Нажимаем на кнопку Авторизация")
     public MainPage clickAuthorizationButton() {
         authorizationButton.click();
         return this;
     }
 
+    @Step("Наводим на элемент")
     public MainPage moveToElement(String menuElement) {
         actions.moveToElement(driver.findElement(By.xpath("//a[contains(text(), \"" + menuElement+ "\")]")))
                 .build()
@@ -31,6 +34,7 @@ public class MainPage extends BasePage {
         return this;
     }
 
+    @Step("Нажимаем на кнопку создать новую комнату")
     public MainPage clickCreateRoomInDropdown() {
         createRoomDropdownMenu.click();
         return this;

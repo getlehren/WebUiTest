@@ -1,5 +1,6 @@
 package org.example.lesson6;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,18 +23,22 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//span[@class=\"resultBox auth_result error\"]")
     private WebElement authorizationFailedWindow;
 
+
+    @Step("Заполняем логин")
     public LoginPage enterLogin(String login) {
         loginField.sendKeys(login);
 
         return this;
     }
 
+    @Step("Заполняем пароль")
     public LoginPage enterPassword(String password) {
         passwordField.sendKeys(password);
 
         return this;
     }
 
+    @Step("Нажимаем кнопку Войти")
     public LoginPage clickSubmit() {
         authButtonSubmit.click();
         return this;
